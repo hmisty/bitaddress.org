@@ -24,6 +24,17 @@
 				var privateKeyWif = key.getBitcoinWalletImportFormat();
 				document.getElementById("btcaddress").innerHTML = bitcoinAddress;
 				document.getElementById("btcprivwif").innerHTML = privateKeyWif;
+
+				var encoder = new Base58ExtHanzi();
+				var bitcoinAddressHanzi = encoder.encode(bitcoinAddress);
+				var privateKeyWifHanzi = encoder.encode(privateKeyWif);
+				// 给 bitcoinAddressHanzi 每10个字加一个 <br>（不在末尾添加）
+				var formattedHanziAddress = bitcoinAddressHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				// 给 privateKeyWifHanzi 每15个字加一个 <br>（不在末尾添加）
+				var formattedHanziPrivateKey = privateKeyWifHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
+				document.getElementById("btcaddress-hanzi").innerHTML = formattedHanziAddress;
+				document.getElementById("btcprivwif-hanzi").innerHTML = formattedHanziPrivateKey;
+
 				var keyValuePair = {
 					"qrcode_public": bitcoinAddress,
 					"qrcode_private": privateKeyWif
