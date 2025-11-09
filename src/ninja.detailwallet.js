@@ -29,6 +29,10 @@
 		getKeyFromInput: function () {
 			var key = document.getElementById("detailprivkey").value.toString().replace(/^\s+|\s+$/g, ""); // trim white space
 			document.getElementById("detailprivkey").value = key;
+			var encoder = new Base58ExtHanzi();
+			if (encoder.isValidHanziEncoded(key)) {
+				key = encoder.decode(key); // WARNING: simply overwrite
+			}
 			return key;
 		},
 
@@ -171,15 +175,27 @@
 				document.getElementById("detailprivb64").innerHTML = btcKey.toString("base64");
 				var bitcoinAddress = btcKey.getBitcoinAddress();
 				var wif = btcKey.getBitcoinWalletImportFormat();
+				var bitcoinAddressHanzi = Base58ExtHanzi.util.encode(bitcoinAddress);
+				var wifHanzi = Base58ExtHanzi.util.encode(wif);
+				var formattedHanziAddress = bitcoinAddressHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				var formattedHanziWIF = wifHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
 				document.getElementById("detailpubkey").innerHTML = btcKey.getPubKeyHex();
 				document.getElementById("detailaddress").innerHTML = bitcoinAddress;
+				document.getElementById("detailaddress_hanzi").innerHTML = formattedHanziAddress;
 				document.getElementById("detailprivwif").innerHTML = wif;
+				document.getElementById("detailprivwif_hanzi").innerHTML = formattedHanziWIF;
 				btcKey.setCompressed(true);
 				var bitcoinAddressComp = btcKey.getBitcoinAddress();
 				var wifComp = btcKey.getBitcoinWalletImportFormat();			
+				var bitcoinAddressCompHanzi = Base58ExtHanzi.util.encode(bitcoinAddressComp);
+				var wifCompHanzi = Base58ExtHanzi.util.encode(wifComp);
+				var formattedHanziAddressComp = bitcoinAddressCompHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				var formattedHanziWIFComp = wifCompHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
 				document.getElementById("detailpubkeycomp").innerHTML = btcKey.getPubKeyHex();
 				document.getElementById("detailaddresscomp").innerHTML = bitcoinAddressComp;
+				document.getElementById("detailaddresscomp_hanzi").innerHTML = formattedHanziAddressComp;
 				document.getElementById("detailprivwifcomp").innerHTML = wifComp;
+				document.getElementById("detailprivwifcomp_hanzi").innerHTML = formattedHanziWIFComp;
 				btcKey.setCompressed(originalCompression); // to satisfy the key pool
 				var pool1 = new Bitcoin.ECKey(wif); // to satisfy the key pool
 				var pool2 = new Bitcoin.ECKey(wifComp); // to satisfy the key pool

@@ -7233,12 +7233,14 @@ input[type=checkbox] { position: relative; z-index: 20; }
 						<div class="item">
 							<span class="label" id="detaillabelbitcoinaddress">Bitcoin Address</span>
 							<div id="detailqrcodepublic" class="qrcode_public"></div>
-							<span class="output" id="detailaddress"></span>
+							<div class="output" id="detailaddress"></div>
+							<div class="output" id="detailaddress_hanzi"></div>
 						</div>					
 						<div class="item right">
 							<span class="label" id="detaillabelbitcoinaddresscomp">Bitcoin Address Compressed</span>
 							<div id="detailqrcodepubliccomp" class="qrcode_public"></div>
-							<span class="output" id="detailaddresscomp"></span>
+							<div class="output" id="detailaddresscomp"></div>
+							<div class="output" id="detailaddresscomp_hanzi"></div>
 						</div>
 					</div>
 					<br /><br />
@@ -7255,12 +7257,14 @@ input[type=checkbox] { position: relative; z-index: 20; }
 						<div class="item">
 							<span class="label"><span id="detaillabelprivwif">Private Key WIF<br />51 characters base58, starts with a</span> <span id="detailwifprefix">'5'</span></span>
 							<div id="detailqrcodeprivate" class="qrcode_private"></div>
-							<span class="output" id="detailprivwif"></span>
+							<div class="output" id="detailprivwif"></div>
+							<div class="output" id="detailprivwif_hanzi"></div>
 						</div>
 						<div class="item right">
 							<span class="label"><span id="detaillabelprivwifcomp">Private Key WIF Compressed<br />52 characters base58, starts with a</span> <span id="detailcompwifprefix">'K' or 'L'</span></span>
 							<div id="detailqrcodeprivatecomp" class="qrcode_private"></div>
-							<span class="output" id="detailprivwifcomp"></span>
+							<div class="output" id="detailprivwifcomp"></div>
+							<div class="output" id="detailprivwifcomp_hanzi"></div>
 						</div>
 					</div>
 					<br /><br />
@@ -10712,6 +10716,10 @@ ninja.wallets.vanitywallet = {
 		getKeyFromInput: function () {
 			var key = document.getElementById("detailprivkey").value.toString().replace(/^\s+|\s+$/g, ""); // trim white space
 			document.getElementById("detailprivkey").value = key;
+			var encoder = new Base58ExtHanzi();
+			if (encoder.isValidHanziEncoded(key)) {
+				key = encoder.decode(key); // WARNING: simply overwrite
+			}
 			return key;
 		},
 
@@ -10854,15 +10862,27 @@ ninja.wallets.vanitywallet = {
 				document.getElementById("detailprivb64").innerHTML = btcKey.toString("base64");
 				var bitcoinAddress = btcKey.getBitcoinAddress();
 				var wif = btcKey.getBitcoinWalletImportFormat();
+				var bitcoinAddressHanzi = Base58ExtHanzi.util.encode(bitcoinAddress);
+				var wifHanzi = Base58ExtHanzi.util.encode(wif);
+				var formattedHanziAddress = bitcoinAddressHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				var formattedHanziWIF = wifHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
 				document.getElementById("detailpubkey").innerHTML = btcKey.getPubKeyHex();
 				document.getElementById("detailaddress").innerHTML = bitcoinAddress;
+				document.getElementById("detailaddress_hanzi").innerHTML = formattedHanziAddress;
 				document.getElementById("detailprivwif").innerHTML = wif;
+				document.getElementById("detailprivwif_hanzi").innerHTML = formattedHanziWIF;
 				btcKey.setCompressed(true);
 				var bitcoinAddressComp = btcKey.getBitcoinAddress();
 				var wifComp = btcKey.getBitcoinWalletImportFormat();			
+				var bitcoinAddressCompHanzi = Base58ExtHanzi.util.encode(bitcoinAddressComp);
+				var wifCompHanzi = Base58ExtHanzi.util.encode(wifComp);
+				var formattedHanziAddressComp = bitcoinAddressCompHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				var formattedHanziWIFComp = wifCompHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
 				document.getElementById("detailpubkeycomp").innerHTML = btcKey.getPubKeyHex();
 				document.getElementById("detailaddresscomp").innerHTML = bitcoinAddressComp;
+				document.getElementById("detailaddresscomp_hanzi").innerHTML = formattedHanziAddressComp;
 				document.getElementById("detailprivwifcomp").innerHTML = wifComp;
+				document.getElementById("detailprivwifcomp_hanzi").innerHTML = formattedHanziWIFComp;
 				btcKey.setCompressed(originalCompression); // to satisfy the key pool
 				var pool1 = new Bitcoin.ECKey(wif); // to satisfy the key pool
 				var pool2 = new Bitcoin.ECKey(wifComp); // to satisfy the key pool
@@ -10957,6 +10977,7 @@ ninja.wallets.vanitywallet = {
 		}
 	};
 })(ninja.wallets, ninja.qrCode, ninja.privateKey, ninja.translator);
+
 	</script>
 	<script type="text/javascript">
 ninja.wallets.splitwallet = {
