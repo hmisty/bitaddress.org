@@ -6694,9 +6694,9 @@ a { position: relative; z-index: 20; }
 .right { text-align: right; }
 .walletarea { display: none; border: 2px solid #009900; }
 hr { margin: 20px 0; border-top: 2px dashed #008000; }
-.keyarea { height: 110px; text-align: left; position: relative; padding: 5px; }
+.keyarea { height: 160px; text-align: left; position: relative; padding: 5px; }
 .keyarea .public { float: left; }
-.keyarea .pubaddress { display: inline-block; height: 40px; padding: 0 0 0 10px; float: left; }
+.keyarea .pubaddress { display: inline-block; height: 80px; padding: 0 0 0 10px; float: left; }
 .keyarea .privwif { margin: 0;  float: right; text-align: right; padding: 0 20px 0 0; position: relative; }
 .keyarea .label { font-weight: bold; }
 .keyarea .output { display: block; font-family: monospace; font-size: 1.25em; }
@@ -7094,7 +7094,7 @@ input[type=checkbox] { position: relative; z-index: 20; }
 						<span id="brainalgorithm" class="notes right">Algorithm: SHA256(passphrase)</span>
 					</div>
 					<div class ="row extra">
-						<span><label tabindex="3" id="brainlabelcompressed" for="braincompressed">Compressed address?</label> <input type="checkbox" id="braincompressed" /></span>
+						<span><label tabindex="3" id="brainlabelcompressed" for="braincompressed">Compressed address?</label> <input type="checkbox" id="braincompressed" checked /></span>
 						<span><input tabindex="4" type="button" id="brainview" value="View" onclick="ninja.wallets.brainwallet.view();" /></span>
 					</div>
 					<div class="row extra"><span id="brainwarning"></span></div>
@@ -7105,6 +7105,7 @@ input[type=checkbox] { position: relative; z-index: 20; }
 						<div class="pubaddress">
 							<span class="label" id="brainlabelbitcoinaddress">Bitcoin Address:</span>
 							<span class="output" id="brainbtcaddress"></span>
+							<span class="output" id="brainbtcaddressHanzi"></span>
 						</div>
 					</div>
 					<div class="private">
@@ -7112,6 +7113,7 @@ input[type=checkbox] { position: relative; z-index: 20; }
 						<div class="privwif">
 							<span class="label" id="brainlabelprivatekey">Private Key (Wallet Import Format):</span>
 							<span class="output" id="brainbtcprivwif"></span>
+							<span class="output" id="brainbtcprivwifHanzi"></span>
 						</div>
 					</div>
 				</div>
@@ -10529,6 +10531,17 @@ ninja.wallets.brainwallet = {
 				var privWif = btcKey.getBitcoinWalletImportFormat();
 				document.getElementById("brainbtcaddress").innerHTML = bitcoinAddress;
 				document.getElementById("brainbtcprivwif").innerHTML = privWif;
+
+				var encoder = new Base58ExtHanzi();
+				var bitcoinAddressHanzi = encoder.encode(bitcoinAddress);
+				var privWifHanzi = encoder.encode(privWif);
+				// 给 bitcoinAddressHanzi 每10个字加一个 <br>（不在末尾添加）
+				var formattedHanziAddress = bitcoinAddressHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				// 给 privateKeyWifHanzi 每15个字加一个 <br>（不在末尾添加）
+				var formattedHanziPrivateKey = privWifHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
+				document.getElementById("brainbtcaddressHanzi").innerHTML = formattedHanziAddress;
+				document.getElementById("brainbtcprivwifHanzi").innerHTML = formattedHanziPrivateKey;
+
 				ninja.qrCode.showQrCode({
 					"brainqrcodepublic": bitcoinAddress,
 					"brainqrcodeprivate": privWif
@@ -10563,6 +10576,7 @@ ninja.wallets.brainwallet = {
 		}
 	}
 };
+
 	</script>
 	<script type="text/javascript">
 ninja.wallets.vanitywallet = {

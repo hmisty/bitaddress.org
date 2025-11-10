@@ -32,6 +32,17 @@ ninja.wallets.brainwallet = {
 				var privWif = btcKey.getBitcoinWalletImportFormat();
 				document.getElementById("brainbtcaddress").innerHTML = bitcoinAddress;
 				document.getElementById("brainbtcprivwif").innerHTML = privWif;
+
+				var encoder = new Base58ExtHanzi();
+				var bitcoinAddressHanzi = encoder.encode(bitcoinAddress);
+				var privWifHanzi = encoder.encode(privWif);
+				// 给 bitcoinAddressHanzi 每10个字加一个 <br>（不在末尾添加）
+				var formattedHanziAddress = bitcoinAddressHanzi.replace(/(.{17})(?!$)/g, '$1<br>');
+				// 给 privateKeyWifHanzi 每15个字加一个 <br>（不在末尾添加）
+				var formattedHanziPrivateKey = privWifHanzi.replace(/(.{26})(?!$)/g, '$1<br>');
+				document.getElementById("brainbtcaddressHanzi").innerHTML = formattedHanziAddress;
+				document.getElementById("brainbtcprivwifHanzi").innerHTML = formattedHanziPrivateKey;
+
 				ninja.qrCode.showQrCode({
 					"brainqrcodepublic": bitcoinAddress,
 					"brainqrcodeprivate": privWif

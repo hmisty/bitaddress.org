@@ -278,7 +278,7 @@
 						<span id="brainalgorithm" class="notes right">Algorithm: SHA256(passphrase)</span>
 					</div>
 					<div class ="row extra">
-						<span><label tabindex="3" id="brainlabelcompressed" for="braincompressed">Compressed address?</label> <input type="checkbox" id="braincompressed" /></span>
+						<span><label tabindex="3" id="brainlabelcompressed" for="braincompressed">Compressed address?</label> <input type="checkbox" id="braincompressed" checked /></span>
 						<span><input tabindex="4" type="button" id="brainview" value="View" onclick="ninja.wallets.brainwallet.view();" /></span>
 					</div>
 					<div class="row extra"><span id="brainwarning"></span></div>
@@ -289,6 +289,7 @@
 						<div class="pubaddress">
 							<span class="label" id="brainlabelbitcoinaddress">Bitcoin Address:</span>
 							<span class="output" id="brainbtcaddress"></span>
+							<span class="output" id="brainbtcaddressHanzi"></span>
 						</div>
 					</div>
 					<div class="private">
@@ -296,6 +297,7 @@
 						<div class="privwif">
 							<span class="label" id="brainlabelprivatekey">Private Key (Wallet Import Format):</span>
 							<span class="output" id="brainbtcprivwif"></span>
+							<span class="output" id="brainbtcprivwifHanzi"></span>
 						</div>
 					</div>
 				</div>
